@@ -5,7 +5,7 @@ A tool to fix the missing profile picture in Windows 8.1 logon screen
 
 <img width="100" alt="icon" src="https://github.com/user-attachments/assets/302758c9-194d-4929-b553-d800bc5e11f0" />
 
-<b>Download it here: </b>
+<b>Download <code>winbluelsppfix.exe</code> now: <a href="https://github.com/win8-png/winbluelsppfix/releases/latest">here</a></b>
 
 ## Description
 As you may recognise, on a fully updated Windows 8.1, your profile picture won’t show on the logon screen. That means if you start your PC, or want to log in after logging off, or even when you just locked your PC, there will be only a generic user icon instead of your profile picture:
