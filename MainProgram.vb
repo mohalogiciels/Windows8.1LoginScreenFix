@@ -34,7 +34,7 @@ Public Class MainProgram
 
         ' Check if OS is Windows 8.1
         Dim WindowsVersion As RegistryKey = Registry.LocalMachine.OpenSubKey("SOFTWARE\Microsoft\Windows NT\CurrentVersion", False)
-        If WindowsVersion.GetValue("CurrentVersion") <> "6.3" Then
+        If WindowsVersion.GetValue("CurrentBuild") <> "9600" Then
             MessageBox.Show("This program is intended to only run on Windows 8.1!", "Not supported operating system", MessageBoxButtons.OK, MessageBoxIcon.Error)
             WindowsVersion.Close()
             Me.Close()
@@ -92,8 +92,8 @@ Public Class MainProgram
                                 FileIO.FileSystem.DeleteFile(My.Application.Info.DirectoryPath & "\regini.txt")
                             End If
                         Catch ex As Exception
-                            MessageBox.Show("An error occured during fixing: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
                             MainProgramToolStripStatusLabel.Text = "An error occured!"
+                            MessageBox.Show("An error occured during fixing: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
                             Me.Close()
                         End Try
                         MainProgramToolStripStatusLabel.Text = "Finished!"
