@@ -12,7 +12,7 @@ As you may recognise, on a fully updated Windows 8.1, your profile picture won�
 
 <img width="300" alt="no_profile_picture" src="https://github.com/user-attachments/assets/ff615209-7ecd-477e-af2c-3e5c53fe5273" />
 
-That’s where this tool comes inhandy, designed and written fully by me 😄
+That’s where this tool comes in handy, which has been designed and written by me for you nice people out there 😄
 
 It’ll add a missing registry key called “Image200” where the path to the image file, which shows the profile picture on the logon screen, is being stored.
 
