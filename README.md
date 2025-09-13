@@ -23,7 +23,7 @@ It’ll add a missing registry key called “Image200” where the path to the i
 ### Et voilà !
 **Look at that, much better!** 
 
-<img width="300" alt="login_screen_fixed" src="https://github.com/user-attachments/assets/3dc27189-fdaf-41c5-87f7-69fa0237776f" />
+<img width="300" alt="login_screen_fixed" src="https://github.com/user-attachments/assets/9403452b-61b7-4ddb-9de1-896d53be7cc5" />
 
 ## System requirements
 * Windows 8.1, 32-bit or 64-bit, fully updated
