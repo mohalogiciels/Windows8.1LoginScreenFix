@@ -1,1 +1,0 @@
-HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\AccountPicture\Users\UserProfileSid [1 8 17]
