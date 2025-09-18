@@ -31,3 +31,9 @@ It’ll add a missing registry key called “Image200” where the path to the i
 * Administrator privileges
 
 <sub><sup>1</sup> a fully updated Windows 8.1 already contains the mandatory version of .NET Framework</sub>
+
+## Images
+
+<img width="200" alt="winbluelsppfix_screenshot" src="https://github.com/user-attachments/assets/177525fe-755f-49e1-b9da-5716664ad070" />
+
+Version 2.0 of this program
