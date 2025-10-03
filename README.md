@@ -4,7 +4,7 @@
 <img width="100" alt="icon" src="https://github.com/user-attachments/assets/302758c9-194d-4929-b553-d800bc5e11f0" />
 
 ## Download
-➡️ **Download <code>winbluelsppfix.zip</code> now: <a href="https://github.com/win8-png/winbluelsppfix/releases/latest">here</a>** ⬅️
+**Download the latest version now:** <a href="https://github.com/mohalogiciels/Windows8.1LoginScreenFix/releases/latest">here</a>
 
 * The program works on both 32-bit and 64-bit systems and recognises the platform automatically.
 * Languages: **English**, **Español (España)**, **Français**
