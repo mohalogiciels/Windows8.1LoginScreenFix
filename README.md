@@ -7,7 +7,7 @@
 **Download the latest version now:** <a href="https://github.com/mohalogiciels/Windows8.1LoginScreenFix/releases/latest">here</a>
 
 * The program works on both 32-bit and 64-bit systems and recognises the platform automatically.
-* Languages: **English**, **Español (España)**, **Français**
+* Languages: **English**, **Español (España)**, **Français**, **Português (Portugal)**
  * You can change the language in the `File` -> `Languages` menu at the top
 
 ### How to use it
