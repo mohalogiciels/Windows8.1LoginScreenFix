@@ -104,7 +104,7 @@ Public Class MainProgram
                 FixMeNow(False)
             End If
         Catch ex As Exception
-            MessageBox.Show(My.Resources.ResourceManager.GetString("ExceptionError" & LanguageAsString) & ex.Message, My.Resources.ErrorEnglish, MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MessageBox.Show(My.Resources.ResourceManager.GetString("ExceptionError" & LanguageAsString) & ex.Message, My.Resources.ResourceManager.GetString("Error" & LanguageAsString), MessageBoxButtons.OK, MessageBoxIcon.Error)
             Me.Close()
         End Try
     End Sub
