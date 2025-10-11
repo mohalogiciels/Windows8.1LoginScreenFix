@@ -17,6 +17,34 @@ Public Class MainProgram
     Dim WinDir As String = Environment.GetFolderPath(Environment.SpecialFolder.Windows)
 
     Private Sub MainProgram_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        ' Set program language before loading program for error messages
+        Dim LanguageAsStringBeforeLoad As String = String.Empty
+        If CultureInfo.CurrentUICulture.ThreeLetterWindowsLanguageName = "ENG" Or CultureInfo.CurrentUICulture.ThreeLetterWindowsLanguageName = "ENU" Then
+            LanguageAsStringBeforeLoad = StrConv(CultureInfo.GetCultureInfo("en").NativeName.Split(" (").First, VbStrConv.ProperCase)
+        ElseIf CultureInfo.CurrentUICulture.ThreeLetterWindowsLanguageName = "ESN" Then
+            LanguageAsStringBeforeLoad = StrConv(CultureInfo.GetCultureInfo("es-ES").NativeName.Split(" (").First, VbStrConv.ProperCase)
+        ElseIf CultureInfo.CurrentUICulture.ThreeLetterWindowsLanguageName = "FRA" Then
+            LanguageAsStringBeforeLoad = StrConv(CultureInfo.GetCultureInfo("fr-FR").NativeName.Split(" (").First, VbStrConv.ProperCase)
+        ElseIf CultureInfo.CurrentUICulture.ThreeLetterWindowsLanguageName = "PTG" Then
+            LanguageAsStringBeforeLoad = StrConv(CultureInfo.GetCultureInfo("pt-PT").NativeName.Split(" (").First, VbStrConv.ProperCase)
+        Else
+            LanguageAsStringBeforeLoad = StrConv(CultureInfo.GetCultureInfo("en").NativeName.Split(" (").First, VbStrConv.ProperCase)
+        End If
+
+        ' Check if 64-bit program started when system is 64-bit
+        If Environment.Is64BitOperatingSystem <> Environment.Is64BitProcess Then
+            MessageBox.Show(My.Resources.ResourceManager.GetString("IsNot64BitProcess" & LanguageAsStringBeforeLoad), My.Resources.ResourceManager.GetString("Error" & LanguageAsString), MessageBoxButtons.OK, MessageBoxIcon.Error)
+            Me.Close()
+        End If
+
+        ' Check if OS is Windows 8.1
+        Using WindowsVersion As RegistryKey = Registry.LocalMachine.OpenSubKey("SOFTWARE\Microsoft\Windows NT\CurrentVersion", False)
+            If WindowsVersion.GetValue("CurrentBuild") <> "9600" Then
+                MessageBox.Show(My.Resources.ResourceManager.GetString("IsNotWin8" & LanguageAsStringBeforeLoad), My.Resources.ResourceManager.GetString("Error" & LanguageAsString), MessageBoxButtons.OK, MessageBoxIcon.Error)
+                Me.Close()
+            End If
+        End Using
+
         ' Change program language to display language if matches available languages, otherwise English
         If CultureInfo.CurrentUICulture.ThreeLetterWindowsLanguageName = "ENG" Or CultureInfo.CurrentUICulture.ThreeLetterWindowsLanguageName = "ENU" Then
             ChangeLanguageTo("en")
@@ -27,7 +55,7 @@ Public Class MainProgram
                 ChangeLanguageTo("en")
             End If
         ElseIf CultureInfo.CurrentUICulture.ThreeLetterWindowsLanguageName = "FRA" Then
-            If FileIO.FileSystem.FileExists(My.Application.Info.DirectoryPath & "\fr\winbluelsppfix.resources.dll") Then
+            If FileIO.FileSystem.FileExists(My.Application.Info.DirectoryPath & "\fr-FR\winbluelsppfix.resources.dll") Then
                 ChangeLanguageTo("fr-FR")
             Else
                 ChangeLanguageTo("en")
@@ -42,26 +70,13 @@ Public Class MainProgram
             ChangeLanguageTo("en")
         End If
 
-        ' Check if 64-bit program started when system is 64-bit
-        If Environment.Is64BitOperatingSystem <> Environment.Is64BitProcess Then
-            MessageBox.Show(My.Resources.ResourceManager.GetString("IsNot64BitProcess" & LanguageAsString), My.Resources.ResourceManager.GetString("Error" & LanguageAsString), MessageBoxButtons.OK, MessageBoxIcon.Error)
-            Me.Close()
-        End If
-
-        ' Check if OS is Windows 8.1
-        Using WindowsVersion As RegistryKey = Registry.LocalMachine.OpenSubKey("SOFTWARE\Microsoft\Windows NT\CurrentVersion", False)
-            If WindowsVersion.GetValue("CurrentBuild") <> "9600" Then
-                MessageBox.Show(My.Resources.ResourceManager.GetString("IsNotWin8" & LanguageAsString), My.Resources.ResourceManager.GetString("Error" & LanguageAsString), MessageBoxButtons.OK, MessageBoxIcon.Error)
-                Me.Close()
-            End If
-        End Using
-
         ' Set font of VersionLabel from resources if not exist on system
         InitialiseVersionLabelFont()
     End Sub
 
     Private Sub LanguageToolStripMenuItem_DropDownItemClicked(sender As Object, e As ToolStripItemClickedEventArgs) Handles LanguageToolStripMenuItem.DropDownItemClicked
         If Not DirectCast(e.ClickedItem, ToolStripMenuItem).Checked Then
+            Me.TopMost = True
             If e.ClickedItem.Text = "English" Then
                 ChangeLanguageTo("en")
             ElseIf e.ClickedItem.Text = "español (España)" Then
@@ -71,6 +86,7 @@ Public Class MainProgram
             ElseIf e.ClickedItem.Text = "português (Portugal)" Then
                 ChangeLanguageTo("pt-PT")
             End If
+            Me.TopMost = False
         End If
     End Sub
 
@@ -93,11 +109,11 @@ Public Class MainProgram
     End Sub
 
     Private Sub ApplyFix_Click(sender As Object, e As EventArgs) Handles ApplyFixButton.Click, ApplyFixToolStripMenuItem.Click
-        ' Run fix in sub FixMeNow
         MainProgramToolStripStatusLabel.Text = My.Resources.ResourceManager.GetString("FixInProgress" & LanguageAsString)
 
         ' Try to fix, and show exception when error occurs
         Try
+            '' Run fix in sub FixMeNow(ByVal FixAllUsers As Boolean)
             If FixAllUsersCheckBox.Checked Then
                 FixMeNow(True)
             Else
@@ -239,16 +255,20 @@ Public Class MainProgram
                 '' Add value Image200
                 If FileIO.FileSystem.FileExists(UserImage200PicturePath) Then
                     '' Change permissions of registry key -> Everyone:Full Control
-                    UserSidRegistryKey = AccountPictureUsersRegistryKey.OpenSubKey(UserSid, RegistryKeyPermissionCheck.ReadWriteSubTree, RegistryRights.ChangePermissions)
-                    UserSidRegistryKey.SetAccessControl(UserSidRegistryKeyPermissions)
-                    '' Open registry key as writable now
-                    UserSidRegistryKey = AccountPictureUsersRegistryKey.OpenSubKey(UserSid, True)
-                    UserSidRegistryKey.SetValue("Image200", UserImage200PicturePath)
-                    '' Set permissions back to original
-                    UserSidRegistryKeyPermissions.RemoveAccessRule(EveryoneAccessRule)
-                    UserSidRegistryKeyPermissions.AddAccessRule(EveryoneReadAccessRule)
-                    UserSidRegistryKey.SetAccessControl(UserSidRegistryKeyPermissions)
-                    UserSidRegistryKey.Close()
+                    With UserSidRegistryKey
+                        UserSidRegistryKey = AccountPictureUsersRegistryKey.OpenSubKey(UserSid, RegistryKeyPermissionCheck.ReadWriteSubTree, RegistryRights.ChangePermissions)
+                        .SetAccessControl(UserSidRegistryKeyPermissions)
+                        '' Open registry key as writable now
+                        UserSidRegistryKey = AccountPictureUsersRegistryKey.OpenSubKey(UserSid, True)
+                        .SetValue("Image200", UserImage200PicturePath)
+                        '' Set permissions back to original
+                        With UserSidRegistryKeyPermissions
+                            .RemoveAccessRule(EveryoneAccessRule)
+                            .AddAccessRule(EveryoneReadAccessRule)
+                        End With
+                        .SetAccessControl(UserSidRegistryKeyPermissions)
+                        .Close()
+                    End With
                 Else
                     Dim UserName As String = New SecurityIdentifier(UserSid).Translate(GetType(NTAccount)).Value
                     MessageBox.Show(My.Resources.ResourceManager.GetString("ProfilePictureNotFoundPart1" & LanguageAsString) & UserImage200PicturePath & My.Resources.ResourceManager.GetString("ProfilePictureNotFoundPart2" & LanguageAsString) & UserName & My.Resources.ResourceManager.GetString("ProfilePictureNotFoundPart3" & LanguageAsString), My.Resources.ResourceManager.GetString("Error" & LanguageAsString), MessageBoxButtons.OK, MessageBoxIcon.Error)
@@ -272,16 +292,20 @@ Public Class MainProgram
             '' Add value Image200
             If FileIO.FileSystem.FileExists(UserImage200PicturePath) Then
                 '' Change permissions of registry key -> Everyone:Full Control
-                UserSidRegistryKey = AccountPictureUsersRegistryKey.OpenSubKey(CurrentUserSid, RegistryKeyPermissionCheck.ReadWriteSubTree, RegistryRights.ChangePermissions)
-                UserSidRegistryKey.SetAccessControl(UserSidRegistryKeyPermissions)
-                '' Open registry key as writable now
-                UserSidRegistryKey = AccountPictureUsersRegistryKey.OpenSubKey(CurrentUserSid, True)
-                UserSidRegistryKey.SetValue("Image200", UserImage200PicturePath)
-                '' Set permissions back to original
-                UserSidRegistryKeyPermissions.RemoveAccessRule(EveryoneAccessRule)
-                UserSidRegistryKeyPermissions.AddAccessRule(EveryoneReadAccessRule)
-                UserSidRegistryKey.SetAccessControl(UserSidRegistryKeyPermissions)
-                UserSidRegistryKey.Close()
+                With UserSidRegistryKey
+                    UserSidRegistryKey = AccountPictureUsersRegistryKey.OpenSubKey(CurrentUserSid, RegistryKeyPermissionCheck.ReadWriteSubTree, RegistryRights.ChangePermissions)
+                    .SetAccessControl(UserSidRegistryKeyPermissions)
+                    '' Open registry key as writable now
+                    UserSidRegistryKey = AccountPictureUsersRegistryKey.OpenSubKey(CurrentUserSid, True)
+                    .SetValue("Image200", UserImage200PicturePath)
+                    '' Set permissions back to original
+                    With UserSidRegistryKeyPermissions
+                        .RemoveAccessRule(EveryoneAccessRule)
+                        .AddAccessRule(EveryoneReadAccessRule)
+                    End With
+                    .SetAccessControl(UserSidRegistryKeyPermissions)
+                    .Close()
+                End With
                 AccountPictureUsersRegistryKey.Close()
             Else
                 MessageBox.Show(My.Resources.ResourceManager.GetString("ProfilePictureCurrentUserNotFoundPart1" & LanguageAsString) & UserImage200PicturePath & My.Resources.ResourceManager.GetString("ProfilePictureCurrentUserNotFoundPart2" & LanguageAsString), My.Resources.ResourceManager.GetString("Error" & LanguageAsString), MessageBoxButtons.OK, MessageBoxIcon.Error)
@@ -289,7 +313,7 @@ Public Class MainProgram
             End If
         End If
 
-        ' If fix has been applied
+        ' If fix has been applied, show in status bar
         MainProgramToolStripStatusLabel.Text = My.Resources.ResourceManager.GetString("StatusBarDone" & LanguageAsString)
 
         ' Ask for log off
