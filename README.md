@@ -44,9 +44,9 @@ After the fix: **Look at that, much better!**
 
 ## Images
 
-<img width="200" alt="winbluelsppfix_screenshot" src="https://github.com/user-attachments/assets/177525fe-755f-49e1-b9da-5716664ad070" />
+<img width="200" alt="winbluelsppfix_screenshot" src="https://github.com/user-attachments/assets/831d4fa7-275b-4148-8326-a43327284659" />
 
-Version 2.0 of this program
+Version 2.2.1.1 of this program
 
-## Something is wrong? ##
-* Something doesn’t work right, or the translation is wrong? You are welcome to write in the issues tab! Help is very appreciated 😄
+## Contact me ##
+* Something doesn’t work right, or the translation is wrong? You are welcome to write in the issues and discussions tab! Your help is very appreciated 😄
