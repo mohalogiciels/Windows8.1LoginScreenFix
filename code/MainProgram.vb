@@ -141,7 +141,7 @@ Public Class MainProgram
             LanguageAsString = StrConv(CultureInfo.GetCultureInfo(ChangeToLanguage).NativeName, VbStrConv.ProperCase)
             EnglishToolStripMenuItem.Checked = True
         Else
-            MessageBox.Show(My.Resources.ResourceManager.GetString("LocalisationFileNotFoundPart1" & LanguageAsString) & My.Application.Info.DirectoryPath & My.Resources.ResourceManager.GetString("LocalisationFileNotFoundPart2" & LanguageAsString), My.Resources.ResourceManager.GetString("Error" & LanguageAsString), MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MessageBox.Show(My.Resources.ResourceManager.GetString("LocalisationFileNotFoundPart1" & StrConv(CultureInfo.GetCultureInfo(ChangeToLanguage).NativeName.Split(" (").First, VbStrConv.ProperCase)) & My.Application.Info.DirectoryPath & My.Resources.ResourceManager.GetString("LocalisationFileNotFoundPart2" & StrConv(CultureInfo.GetCultureInfo(ChangeToLanguage).NativeName.Split(" (").First, VbStrConv.ProperCase)), My.Resources.ResourceManager.GetString("Error" & LanguageAsString), MessageBoxButtons.OK, MessageBoxIcon.Error)
         End If
     End Sub
 
