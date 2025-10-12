@@ -1,7 +1,9 @@
 # Windows 8.1 Login Screen Fix
 <sup>made with Visual Basic .NET in Visual Studio 2012 in Windows 8.1</sup>
 
-<img width="100" alt="icon" src="https://github.com/user-attachments/assets/302758c9-194d-4929-b553-d800bc5e11f0" />
+<p align="center">
+  <img width="100" alt="icon" src="https://github.com/user-attachments/assets/302758c9-194d-4929-b553-d800bc5e11f0" />
+</p>
 
 ## Download
 **Download the latest version now:** <a href="https://github.com/mohalogiciels/Windows8.1LoginScreenFix/releases/latest">here</a>
