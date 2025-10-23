@@ -46,9 +46,9 @@ After the fix: **Look at that, much better!**
 
 ## Images
 
-<img width="200" alt="winbluelsppfix_screenshot" src="https://github.com/user-attachments/assets/831d4fa7-275b-4148-8326-a43327284659" />
+<img width="200" alt="Screenshot_v2.3" src="https://github.com/user-attachments/assets/967e344c-fc10-489a-8048-274f50ea132e" />
 
-Version 2.2.1.1 of this program
+Version 2.3 of this program
 
 ## Contact me ##
 * Something doesn’t work right, or the translation is wrong? You are welcome to write in the issues and discussions tab! Your help is very appreciated 😄
