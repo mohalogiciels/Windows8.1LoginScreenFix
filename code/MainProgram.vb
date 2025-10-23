@@ -11,80 +11,54 @@ Public Class MainProgram
     Dim AccountPictureUsersRegistryKey As RegistryKey = Registry.LocalMachine.OpenSubKey("SOFTWARE\Microsoft\Windows\CurrentVersion\AccountPicture\Users", False)
     Dim CurrentUserSid As String = Registry.LocalMachine.OpenSubKey("SOFTWARE\Microsoft\Windows\CurrentVersion\Authentication\LogonUI", False).GetValue("SelectedUserSID")
     Dim IsCurrentUserMissingProfilePicture As Boolean
-    Dim LanguageAsString As String = String.Empty
     Dim StatusChecked As Boolean = False
+    Dim UICulturesArray As String() = {"en", "es-ES", "fr-FR", "pt-PT"}
+    Dim UICultureString As String = CultureInfo.CurrentUICulture.Name
+    Dim UICulture As String = UICultureString.Replace("-", "_")
     Dim UsersWithMissingProfilePictureSidList As New List(Of String)
     Dim WinDir As String = Environment.GetFolderPath(Environment.SpecialFolder.Windows)
 
     Private Sub MainProgram_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        ' Set program language before loading program for error messages
-        Dim LanguageAsStringBeforeLoad As String = String.Empty
-        If CultureInfo.CurrentUICulture.ThreeLetterWindowsLanguageName = "ENG" Or CultureInfo.CurrentUICulture.ThreeLetterWindowsLanguageName = "ENU" Then
-            LanguageAsStringBeforeLoad = StrConv(CultureInfo.GetCultureInfo("en").NativeName.Split(" (").First, VbStrConv.ProperCase)
-        ElseIf CultureInfo.CurrentUICulture.ThreeLetterWindowsLanguageName = "ESN" Then
-            LanguageAsStringBeforeLoad = StrConv(CultureInfo.GetCultureInfo("es-ES").NativeName.Split(" (").First, VbStrConv.ProperCase)
-        ElseIf CultureInfo.CurrentUICulture.ThreeLetterWindowsLanguageName = "FRA" Then
-            LanguageAsStringBeforeLoad = StrConv(CultureInfo.GetCultureInfo("fr-FR").NativeName.Split(" (").First, VbStrConv.ProperCase)
-        ElseIf CultureInfo.CurrentUICulture.ThreeLetterWindowsLanguageName = "PTG" Then
-            LanguageAsStringBeforeLoad = StrConv(CultureInfo.GetCultureInfo("pt-PT").NativeName.Split(" (").First, VbStrConv.ProperCase)
-        Else
-            LanguageAsStringBeforeLoad = StrConv(CultureInfo.GetCultureInfo("en").NativeName.Split(" (").First, VbStrConv.ProperCase)
+        ' If UI language is English or not in list, set strings to universal English without region specified
+        If CultureInfo.CurrentUICulture.Name.StartsWith("en") Or Not UICulturesArray.Contains(CultureInfo.CurrentUICulture.Name) Then
+            UICultureString = "en"
+            UICulture = "en"
         End If
 
         ' Check if 64-bit program started when system is 64-bit
         If Environment.Is64BitOperatingSystem <> Environment.Is64BitProcess Then
-            MessageBox.Show(My.Resources.ResourceManager.GetString("IsNot64BitProcess" & LanguageAsStringBeforeLoad), My.Resources.ResourceManager.GetString("Error" & LanguageAsString), MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MessageBox.Show(My.Resources.ResourceManager.GetString("IsNot64BitProcess_" & UICulture), My.Resources.ResourceManager.GetString("Error_" & UICulture), MessageBoxButtons.OK, MessageBoxIcon.Error)
             Me.Close()
         End If
 
         ' Check if OS is Windows 8.1
         Using WindowsVersion As RegistryKey = Registry.LocalMachine.OpenSubKey("SOFTWARE\Microsoft\Windows NT\CurrentVersion", False)
             If WindowsVersion.GetValue("CurrentBuild") <> "9600" Then
-                MessageBox.Show(My.Resources.ResourceManager.GetString("IsNotWin8" & LanguageAsStringBeforeLoad), My.Resources.ResourceManager.GetString("Error" & LanguageAsString), MessageBoxButtons.OK, MessageBoxIcon.Error)
+                MessageBox.Show(My.Resources.ResourceManager.GetString("IsNotWin8_" & UICulture), My.Resources.ResourceManager.GetString("Error_" & UICulture), MessageBoxButtons.OK, MessageBoxIcon.Error)
                 Me.Close()
             End If
         End Using
 
-        ' Change program language to display language if matches available languages, otherwise English
-        If CultureInfo.CurrentUICulture.ThreeLetterWindowsLanguageName = "ENG" Or CultureInfo.CurrentUICulture.ThreeLetterWindowsLanguageName = "ENU" Then
-            ChangeLanguageTo("en")
-        ElseIf CultureInfo.CurrentUICulture.ThreeLetterWindowsLanguageName = "ESN" Then
-            If FileIO.FileSystem.FileExists(My.Application.Info.DirectoryPath & "\es-ES\winbluelsppfix.resources.dll") Then
-                ChangeLanguageTo("es-ES")
-            Else
-                ChangeLanguageTo("en")
-            End If
-        ElseIf CultureInfo.CurrentUICulture.ThreeLetterWindowsLanguageName = "FRA" Then
-            If FileIO.FileSystem.FileExists(My.Application.Info.DirectoryPath & "\fr-FR\winbluelsppfix.resources.dll") Then
-                ChangeLanguageTo("fr-FR")
-            Else
-                ChangeLanguageTo("en")
-            End If
-        ElseIf CultureInfo.CurrentUICulture.ThreeLetterWindowsLanguageName = "PTG" Then
-            If FileIO.FileSystem.FileExists(My.Application.Info.DirectoryPath & "\pt-PT\winbluelsppfix.resources.dll") Then
-                ChangeLanguageTo("pt-PT")
-            Else
-                ChangeLanguageTo("en")
-            End If
-        Else
-            ChangeLanguageTo("en")
-        End If
-
         ' Set font of VersionLabel from resources if not exist on system
         InitialiseVersionLabelFont()
+    End Sub
+
+    Private Sub MainProgram_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
+        ' Check entry in language menu
+        DirectCast(LanguageToolStripMenuItem.DropDownItems.Find(StrConv(CultureInfo.GetCultureInfo(UICultureString).NativeName.Split(" (").First, VbStrConv.ProperCase) & "ToolStripMenuItem", False).First, ToolStripMenuItem).Checked = True
     End Sub
 
     Private Sub LanguageToolStripMenuItem_DropDownItemClicked(sender As Object, e As ToolStripItemClickedEventArgs) Handles LanguageToolStripMenuItem.DropDownItemClicked
         If Not DirectCast(e.ClickedItem, ToolStripMenuItem).Checked Then
             Me.TopMost = True
             If e.ClickedItem.Text = "English" Then
-                ChangeLanguageTo("en")
+                ChangeLanguageTo("en", e.ClickedItem.Text)
             ElseIf e.ClickedItem.Text = "español (España)" Then
-                ChangeLanguageTo("es-ES")
+                ChangeLanguageTo("es-ES", e.ClickedItem.Text)
             ElseIf e.ClickedItem.Text = "français (France)" Then
-                ChangeLanguageTo("fr-FR")
+                ChangeLanguageTo("fr-FR", e.ClickedItem.Text)
             ElseIf e.ClickedItem.Text = "português (Portugal)" Then
-                ChangeLanguageTo("pt-PT")
+                ChangeLanguageTo("pt-PT", e.ClickedItem.Text)
             End If
             Me.TopMost = False
         End If
@@ -104,14 +78,13 @@ Public Class MainProgram
 
     Private Sub CheckStatus_Click(sender As Object, e As EventArgs) Handles CheckStatusButton.Click, CheckStatusToolStripMenuItem.Click
         ' Check status for profile pictures
-        MainProgramToolStripStatusLabel.Text = My.Resources.ResourceManager.GetString("CheckingStatus" & LanguageAsString)
+        MainProgramToolStripStatusLabel.Text = My.Resources.ResourceManager.GetString("CheckingStatus_" & UICulture)
         CheckStatus()
     End Sub
 
     Private Sub ApplyFix_Click(sender As Object, e As EventArgs) Handles ApplyFixButton.Click, ApplyFixToolStripMenuItem.Click
-        MainProgramToolStripStatusLabel.Text = My.Resources.ResourceManager.GetString("FixInProgress" & LanguageAsString)
-
         ' Try to fix, and show exception when error occurs
+        MainProgramToolStripStatusLabel.Text = My.Resources.ResourceManager.GetString("FixInProgress_" & UICulture)
         Try
             '' Run fix in sub FixMeNow(ByVal FixAllUsers As Boolean)
             If FixAllUsersCheckBox.Checked Then
@@ -120,13 +93,13 @@ Public Class MainProgram
                 FixMeNow(False)
             End If
         Catch ex As Exception
-            MessageBox.Show(My.Resources.ResourceManager.GetString("ExceptionError" & LanguageAsString) & ex.Message, My.Resources.ResourceManager.GetString("Error" & LanguageAsString), MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MessageBox.Show(My.Resources.ResourceManager.GetString("ExceptionError_" & UICulture) & ex.Message, My.Resources.ResourceManager.GetString("Error_" & UICulture), MessageBoxButtons.OK, MessageBoxIcon.Error)
             Me.Close()
         End Try
     End Sub
 
     Private Sub InfoLabel_Click(sender As Object, e As EventArgs) Handles InfoLabel.Click
-        MessageBox.Show(My.Resources.ResourceManager.GetString("InformationFixAllUsers" & LanguageAsString), My.Resources.ResourceManager.GetString("Info" & LanguageAsString), MessageBoxButtons.OK, MessageBoxIcon.Information)
+        MessageBox.Show(My.Resources.ResourceManager.GetString("InformationFixAllUsers_" & UICulture), My.Resources.ResourceManager.GetString("Info_" & UICulture), MessageBoxButtons.OK, MessageBoxIcon.Information)
     End Sub
 
     Private Sub InitialiseVersionLabelFont()
@@ -145,19 +118,21 @@ Public Class MainProgram
         End If
     End Sub
 
-    Private Sub ChangeLanguageTo(ByVal ChangeToLanguage As String)
+    Private Sub ChangeLanguageTo(ByVal ChangeToLanguage As String, ByVal LanguageAsString As String)
         If ChangeToLanguage <> "en" And FileIO.FileSystem.FileExists(My.Application.Info.DirectoryPath & "\" & ChangeToLanguage & "\winbluelsppfix.resources.dll") Then
             My.Application.ChangeUICulture(ChangeToLanguage)
             InitialiseLanguageChange()
-            LanguageAsString = StrConv(CultureInfo.GetCultureInfo(ChangeToLanguage).NativeName.Split(" (").First, VbStrConv.ProperCase)
-            DirectCast(LanguageToolStripMenuItem.DropDownItems.Find(LanguageAsString & "ToolStripMenuItem", True).First, ToolStripMenuItem).Checked = True
+            UICultureString = ChangeToLanguage
+            UICulture = UICultureString.Replace("-", "_")
+            DirectCast(LanguageToolStripMenuItem.DropDownItems.Find(StrConv(LanguageAsString.Split(" (").First, VbStrConv.ProperCase) & "ToolStripMenuItem", False).First, ToolStripMenuItem).Checked = True
         ElseIf ChangeToLanguage = "en" Then
             My.Application.ChangeUICulture(ChangeToLanguage)
             InitialiseLanguageChange()
-            LanguageAsString = StrConv(CultureInfo.GetCultureInfo(ChangeToLanguage).NativeName, VbStrConv.ProperCase)
+            UICultureString = "en"
+            UICulture = "en"
             EnglishToolStripMenuItem.Checked = True
         Else
-            MessageBox.Show(My.Resources.ResourceManager.GetString("LocalisationFileNotFoundPart1" & StrConv(CultureInfo.GetCultureInfo(ChangeToLanguage).NativeName.Split(" (").First, VbStrConv.ProperCase)) & My.Application.Info.DirectoryPath & My.Resources.ResourceManager.GetString("LocalisationFileNotFoundPart2" & StrConv(CultureInfo.GetCultureInfo(ChangeToLanguage).NativeName.Split(" (").First, VbStrConv.ProperCase)), My.Resources.ResourceManager.GetString("Error" & LanguageAsString), MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MessageBox.Show(My.Resources.ResourceManager.GetString("LocalisationFileNotFoundPart1_" & UICulture) & My.Application.Info.DirectoryPath & My.Resources.ResourceManager.GetString("LocalisationFileNotFoundPart2_" & UICulture), My.Resources.ResourceManager.GetString("Error_" & UICulture), MessageBoxButtons.OK, MessageBoxIcon.Error)
         End If
     End Sub
 
@@ -190,13 +165,13 @@ Public Class MainProgram
                     Next
                     StatusChecked = True
                 Else
-                    MessageBox.Show(My.Resources.ResourceManager.GetString("NoUserProfilePicture" & LanguageAsString), My.Resources.ResourceManager.GetString("Warning" & LanguageAsString), MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
-                    MainProgramToolStripStatusLabel.Text = My.Resources.ResourceManager.GetString("StatusBarError" & LanguageAsString)
+                    MessageBox.Show(My.Resources.ResourceManager.GetString("NoUserProfilePicture_" & UICulture), My.Resources.ResourceManager.GetString("Warning_" & UICulture), MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
+                    MainProgramToolStripStatusLabel.Text = My.Resources.ResourceManager.GetString("StatusBarError_" & UICulture)
                     Exit Sub
                 End If
             Else
-                MessageBox.Show(My.Resources.ResourceManager.GetString("UserNameListError" & LanguageAsString), My.Resources.ResourceManager.GetString("Error" & LanguageAsString), MessageBoxButtons.OK, MessageBoxIcon.Error)
-                MainProgramToolStripStatusLabel.Text = My.Resources.ResourceManager.GetString("StatusBarError" & LanguageAsString)
+                MessageBox.Show(My.Resources.ResourceManager.GetString("UserNameListError_" & UICulture), My.Resources.ResourceManager.GetString("Error_" & UICulture), MessageBoxButtons.OK, MessageBoxIcon.Error)
+                MainProgramToolStripStatusLabel.Text = My.Resources.ResourceManager.GetString("StatusBarError_" & UICulture)
             End If
         End If
 
@@ -205,11 +180,11 @@ Public Class MainProgram
             '' Show MessageBox with how many users have missing profile picture
             Dim IsCurrentUserMissingProfilePictureString As String = String.Empty
             If IsCurrentUserMissingProfilePicture = True Then
-                IsCurrentUserMissingProfilePictureString = My.Resources.ResourceManager.GetString("Yes" & LanguageAsString)
+                IsCurrentUserMissingProfilePictureString = My.Resources.ResourceManager.GetString("Yes_" & UICulture)
             Else
-                IsCurrentUserMissingProfilePictureString = My.Resources.ResourceManager.GetString("No" & LanguageAsString)
+                IsCurrentUserMissingProfilePictureString = My.Resources.ResourceManager.GetString("No_" & UICulture)
             End If
-            MessageBox.Show(My.Resources.ResourceManager.GetString("UsersWithMissingProfilePictures" & LanguageAsString) & UsersWithMissingProfilePictureSidList.Count & vbCrLf & My.Resources.ResourceManager.GetString("CurrentUserMissingProfilePicture" & LanguageAsString) & IsCurrentUserMissingProfilePicture, My.Resources.ResourceManager.GetString("Info" & LanguageAsString), MessageBoxButtons.OK, MessageBoxIcon.Information)
+            MessageBox.Show(My.Resources.ResourceManager.GetString("UsersWithMissingProfilePictures_" & UICulture) & UsersWithMissingProfilePictureSidList.Count & vbCrLf & My.Resources.ResourceManager.GetString("CurrentUserMissingProfilePicture_" & UICulture) & IsCurrentUserMissingProfilePictureString, My.Resources.ResourceManager.GetString("Info_" & UICulture), MessageBoxButtons.OK, MessageBoxIcon.Information)
             '' Preparations before fix
             CheckStatusButton.Enabled = False
             CheckStatusToolStripMenuItem.Enabled = False
@@ -229,10 +204,10 @@ Public Class MainProgram
                 InfoLabel.Enabled = False
             End If
             '' Set status bar to ready
-            MainProgramToolStripStatusLabel.Text = My.Resources.ResourceManager.GetString("Ready" & LanguageAsString)
+            MainProgramToolStripStatusLabel.Text = My.Resources.ResourceManager.GetString("Ready_" & UICulture)
         Else
-            MessageBox.Show(My.Resources.ResourceManager.GetString("FixAlreadyApplied" & LanguageAsString), My.Resources.ResourceManager.GetString("Warning" & LanguageAsString), MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
-            MainProgramToolStripStatusLabel.Text = My.Resources.ResourceManager.GetString("StatusBarAlreadyApplied" & LanguageAsString)
+            MessageBox.Show(My.Resources.ResourceManager.GetString("FixAlreadyApplied_" & UICulture), My.Resources.ResourceManager.GetString("Warning_" & UICulture), MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
+            MainProgramToolStripStatusLabel.Text = My.Resources.ResourceManager.GetString("StatusBarAlreadyApplied_" & UICulture)
         End If
     End Sub
 
@@ -255,24 +230,20 @@ Public Class MainProgram
                 '' Add value Image200
                 If FileIO.FileSystem.FileExists(UserImage200PicturePath) Then
                     '' Change permissions of registry key -> Everyone:Full Control
-                    With UserSidRegistryKey
-                        UserSidRegistryKey = AccountPictureUsersRegistryKey.OpenSubKey(UserSid, RegistryKeyPermissionCheck.ReadWriteSubTree, RegistryRights.ChangePermissions)
-                        .SetAccessControl(UserSidRegistryKeyPermissions)
-                        '' Open registry key as writable now
-                        UserSidRegistryKey = AccountPictureUsersRegistryKey.OpenSubKey(UserSid, True)
-                        .SetValue("Image200", UserImage200PicturePath)
-                        '' Set permissions back to original
-                        With UserSidRegistryKeyPermissions
-                            .RemoveAccessRule(EveryoneAccessRule)
-                            .AddAccessRule(EveryoneReadAccessRule)
-                        End With
-                        .SetAccessControl(UserSidRegistryKeyPermissions)
-                        .Close()
-                    End With
+                    UserSidRegistryKey = AccountPictureUsersRegistryKey.OpenSubKey(UserSid, RegistryKeyPermissionCheck.ReadWriteSubTree, RegistryRights.ChangePermissions)
+                    UserSidRegistryKey.SetAccessControl(UserSidRegistryKeyPermissions)
+                    '' Open registry key as writable now
+                    UserSidRegistryKey = AccountPictureUsersRegistryKey.OpenSubKey(UserSid, True)
+                    UserSidRegistryKey.SetValue("Image200", UserImage200PicturePath)
+                    '' Set permissions back to original
+                    UserSidRegistryKeyPermissions.RemoveAccessRule(EveryoneAccessRule)
+                    UserSidRegistryKeyPermissions.AddAccessRule(EveryoneReadAccessRule)
+                    UserSidRegistryKey.SetAccessControl(UserSidRegistryKeyPermissions)
+                    UserSidRegistryKey.Close()
                 Else
                     Dim UserName As String = New SecurityIdentifier(UserSid).Translate(GetType(NTAccount)).Value
-                    MessageBox.Show(My.Resources.ResourceManager.GetString("ProfilePictureNotFoundPart1" & LanguageAsString) & UserImage200PicturePath & My.Resources.ResourceManager.GetString("ProfilePictureNotFoundPart2" & LanguageAsString) & UserName & My.Resources.ResourceManager.GetString("ProfilePictureNotFoundPart3" & LanguageAsString), My.Resources.ResourceManager.GetString("Error" & LanguageAsString), MessageBoxButtons.OK, MessageBoxIcon.Error)
-                    MainProgramToolStripStatusLabel.Text = My.Resources.ResourceManager.GetString("StatusBarError" & LanguageAsString)
+                    MessageBox.Show(My.Resources.ResourceManager.GetString("ProfilePictureNotFoundPart1_" & UICulture) & UserImage200PicturePath & My.Resources.ResourceManager.GetString("ProfilePictureNotFoundPart2_" & UICulture) & UserName & My.Resources.ResourceManager.GetString("ProfilePictureNotFoundPart3_" & UICulture), My.Resources.ResourceManager.GetString("Error_" & UICulture), MessageBoxButtons.OK, MessageBoxIcon.Error)
+                    MainProgramToolStripStatusLabel.Text = My.Resources.ResourceManager.GetString("StatusBarError_" & UICulture)
                 End If
             Next
             AccountPictureUsersRegistryKey.Close()
@@ -292,33 +263,29 @@ Public Class MainProgram
             '' Add value Image200
             If FileIO.FileSystem.FileExists(UserImage200PicturePath) Then
                 '' Change permissions of registry key -> Everyone:Full Control
-                With UserSidRegistryKey
-                    UserSidRegistryKey = AccountPictureUsersRegistryKey.OpenSubKey(CurrentUserSid, RegistryKeyPermissionCheck.ReadWriteSubTree, RegistryRights.ChangePermissions)
-                    .SetAccessControl(UserSidRegistryKeyPermissions)
-                    '' Open registry key as writable now
-                    UserSidRegistryKey = AccountPictureUsersRegistryKey.OpenSubKey(CurrentUserSid, True)
-                    .SetValue("Image200", UserImage200PicturePath)
-                    '' Set permissions back to original
-                    With UserSidRegistryKeyPermissions
-                        .RemoveAccessRule(EveryoneAccessRule)
-                        .AddAccessRule(EveryoneReadAccessRule)
-                    End With
-                    .SetAccessControl(UserSidRegistryKeyPermissions)
-                    .Close()
-                End With
+                UserSidRegistryKey = AccountPictureUsersRegistryKey.OpenSubKey(CurrentUserSid, RegistryKeyPermissionCheck.ReadWriteSubTree, RegistryRights.ChangePermissions)
+                UserSidRegistryKey.SetAccessControl(UserSidRegistryKeyPermissions)
+                '' Open registry key as writable now
+                UserSidRegistryKey = AccountPictureUsersRegistryKey.OpenSubKey(CurrentUserSid, True)
+                UserSidRegistryKey.SetValue("Image200", UserImage200PicturePath)
+                '' Set permissions back to original
+                UserSidRegistryKeyPermissions.RemoveAccessRule(EveryoneAccessRule)
+                UserSidRegistryKeyPermissions.AddAccessRule(EveryoneReadAccessRule)
+                UserSidRegistryKey.SetAccessControl(UserSidRegistryKeyPermissions)
+                UserSidRegistryKey.Close()
                 AccountPictureUsersRegistryKey.Close()
             Else
-                MessageBox.Show(My.Resources.ResourceManager.GetString("ProfilePictureCurrentUserNotFoundPart1" & LanguageAsString) & UserImage200PicturePath & My.Resources.ResourceManager.GetString("ProfilePictureCurrentUserNotFoundPart2" & LanguageAsString), My.Resources.ResourceManager.GetString("Error" & LanguageAsString), MessageBoxButtons.OK, MessageBoxIcon.Error)
-                MainProgramToolStripStatusLabel.Text = My.Resources.ResourceManager.GetString("StatusBarError" & LanguageAsString)
+                MessageBox.Show(My.Resources.ResourceManager.GetString("ProfilePictureCurrentUserNotFoundPart1_" & UICulture) & UserImage200PicturePath & My.Resources.ResourceManager.GetString("ProfilePictureCurrentUserNotFoundPart2_" & UICulture), My.Resources.ResourceManager.GetString("Error_" & UICulture), MessageBoxButtons.OK, MessageBoxIcon.Error)
+                MainProgramToolStripStatusLabel.Text = My.Resources.ResourceManager.GetString("StatusBarError_" & UICulture)
             End If
         End If
 
         ' If fix has been applied, show in status bar
-        MainProgramToolStripStatusLabel.Text = My.Resources.ResourceManager.GetString("StatusBarDone" & LanguageAsString)
+        MainProgramToolStripStatusLabel.Text = My.Resources.ResourceManager.GetString("StatusBarDone_" & UICulture)
 
         ' Ask for log off
         Dim LogOffMessage As New DialogResult
-        LogOffMessage = MessageBox.Show(My.Resources.ResourceManager.GetString("LogOffMessage" & LanguageAsString), My.Resources.ResourceManager.GetString("Success" & LanguageAsString), MessageBoxButtons.YesNo, MessageBoxIcon.Information)
+        LogOffMessage = MessageBox.Show(My.Resources.ResourceManager.GetString("LogOffMessage_" & UICulture), My.Resources.ResourceManager.GetString("Success_" & UICulture), MessageBoxButtons.YesNo, MessageBoxIcon.Information)
 
         ' Log off if answer is "Yes", otherwise just close program
         If LogOffMessage = System.Windows.Forms.DialogResult.Yes Then
