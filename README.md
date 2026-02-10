@@ -13,6 +13,7 @@
 * The program works on both 32-bit and 64-bit systems and recognises the platform automatically.
 * Languages: &nbsp; 🇬🇧 **English** &nbsp; 🇪🇸 **Español (España)** &nbsp; 🇫🇷 **Français (France)** &nbsp; 🇵🇹 **Português (Portugal)**
   * Wrong language set? You can change the language in the `File` -> `Languages` menu at the top.
+  * Thanks to [DeepL Translator](https://www.deepl.com/es/translator) for helping with the translations!
 
 ### How to use it
 * First, click on “check status” to check how many user profiles have missing profile pictures.
@@ -54,4 +55,8 @@ After the fix: **Look at that, much better!**
 Version 2.3 of this program
 
 ## Contact me ##
-* Something doesn’t work right, or the translation is wrong? You are welcome to write in the [issues](https://github.com/mohalogiciels/Windows8.1LoginScreenFix/issues) and [discussions](https://github.com/mohalogiciels/Windows8.1LoginScreenFix/discussions) tab, or use the contact info in the `?` -> `Contact me` menu at the top. Your help is very appreciated 😄
+Something **doesn’t work right**, or the **translation is wrong**?
+
+You are welcome to write in the [Issues](https://github.com/mohalogiciels/Windows8.1LoginScreenFix/issues) and [Discussions](https://github.com/mohalogiciels/Windows8.1LoginScreenFix/discussions) tab, or use the contact info in the `?` -> `Contact me` menu in the program.
+
+Your help is very appreciated 😄
