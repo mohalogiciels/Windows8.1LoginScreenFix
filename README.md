@@ -1,4 +1,6 @@
-# Windows 8.1 Login Screen Fix
+# Windows 8.1 Login Screen Profile Picture Fix
+<sup>**Windows 8.1 Login Screen Fix**</sup>
+
 <sup>made with Visual Basic .NET in Visual Studio 2012 in Windows 8.1</sup>
 
 <p align="center">
