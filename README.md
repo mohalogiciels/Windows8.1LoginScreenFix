@@ -9,8 +9,8 @@
 **Download the latest version now:** <a href="https://github.com/mohalogiciels/Windows8.1LoginScreenFix/releases/latest">here</a>
 
 * The program works on both 32-bit and 64-bit systems and recognises the platform automatically.
-* Languages: **English**, **Español (España)**, **Français (France)**, **Português (Portugal)**
- * You can change the language in the `File` -> `Languages` menu at the top
+* Languages: &nbsp; 🇬🇧 **English** &nbsp; 🇪🇸 **Español (España)** &nbsp; 🇫🇷 **Français (France)** &nbsp; 🇵🇹 **Português (Portugal)**
+  * Wrong language set? You can change the language in the `File` -> `Languages` menu at the top.
 
 ### How to use it
 * First, click on “check status” to check how many user profiles have missing profile pictures.
@@ -38,8 +38,9 @@ After the fix: **Look at that, much better!**
 <img width="300" alt="login_screen_fixed" src="https://github.com/user-attachments/assets/7dc7c0bd-a284-4007-8d15-20e745172eba" />
 
 ## System requirements
-* Windows 8.1 32-bit or 64-bit, fully updated
-* .NET Framework 4.5.2 or higher<sup>1</sup>
+* Windows 8.1, 32-bit or 64-bit
+  * preferably fully updated
+* .NET Framework 4.5.2 or higher <sup>1</sup>
 * Administrator privileges
 
 <sub><sup>1</sup> a fully updated Windows 8.1 already contains the mandatory version of .NET Framework</sub>
@@ -51,4 +52,4 @@ After the fix: **Look at that, much better!**
 Version 2.3 of this program
 
 ## Contact me ##
-* Something doesn’t work right, or the translation is wrong? You are welcome to write in the issues and discussions tab! Your help is very appreciated 😄
+* Something doesn’t work right, or the translation is wrong? You are welcome to write in the [issues](https://github.com/mohalogiciels/Windows8.1LoginScreenFix/issues) and [discussions](https://github.com/mohalogiciels/Windows8.1LoginScreenFix/discussions) tab, or use the contact info in the `?` -> `Contact me` menu at the top. Your help is very appreciated 😄
