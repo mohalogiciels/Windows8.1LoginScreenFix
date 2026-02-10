@@ -13,7 +13,7 @@
 * The program works on both 32-bit and 64-bit systems and recognises the platform automatically.
 * Languages: &nbsp; 🇬🇧 **English** &nbsp; 🇪🇸 **Español (España)** &nbsp; 🇫🇷 **Français (France)** &nbsp; 🇵🇹 **Português (Portugal)**
   * Wrong language set? You can change the language in the `File` -> `Languages` menu at the top.
-  * Thanks to [DeepL Translator](https://www.deepl.com/es/translator) for helping with the translations!
+  * Thanks to [DeepL Translator](https://www.deepl.com/translator) for helping with the translations!
 
 ### How to use it
 * First, click on “check status” to check how many user profiles have missing profile pictures.
