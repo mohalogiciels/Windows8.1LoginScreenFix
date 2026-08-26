@@ -16,4 +16,4 @@
   * Thanks to [DeepL Translator](https://www.deepl.com/translator) for helping with the translations!
 
 ## Info
-To get more info about this program, visit my website [here](https://mohalogiciels.runasp.net/Downloads/#win8login).
+To get more info about this program, please visit my website by [clicking here](https://mohalogiciels.runasp.net/Downloads/#win8login).
