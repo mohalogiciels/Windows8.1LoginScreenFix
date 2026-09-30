@@ -8,6 +8,10 @@
         Process.Start("mailto:mohalogiciels@hotmail.com")
     End Sub
 
+    Private Sub ContactFormLabel_LinkClicked(sender As Object, e As LinkLabelLinkClickedEventArgs) Handles ContactFormLabel.LinkClicked
+        Process.Start("https://mohalogiciels.runasp.net/Contact/")
+    End Sub
+
     Private Sub OKButton_Click(sender As Object, e As EventArgs) Handles OKButton.Click
         Me.Dispose()
     End Sub

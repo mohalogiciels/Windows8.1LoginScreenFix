@@ -86,7 +86,7 @@ Public Class MainProgram
         ' Try to fix, and show exception when error occurs
         MainProgramToolStripStatusLabel.Text = My.Resources.ResourceManager.GetString("FixInProgress_" & UICulture)
         Try
-            '' Run fix in sub FixMeNow(ByVal FixAllUsers As Boolean)
+            '' Run fix
             If FixAllUsersCheckBox.Checked Then
                 FixMeNow(True)
             Else
@@ -103,17 +103,12 @@ Public Class MainProgram
     End Sub
 
     Private Sub InitialiseVersionLabelFont()
-        Dim FontDirectory As String = Environment.GetFolderPath(Environment.SpecialFolder.Fonts)
-        If Not FileIO.FileSystem.FileExists(FontDirectory & "\SHOWG.TTF") Then
-            Using ProgramFonts As New PrivateFontCollection
-                Dim FontBuffer As IntPtr = Marshal.AllocCoTaskMem(My.Resources.ShowcardFontFile.Length)
-                Marshal.Copy(My.Resources.ShowcardFontFile, 0, FontBuffer, My.Resources.ShowcardFontFile.Length)
-                ProgramFonts.AddMemoryFont(FontBuffer, My.Resources.ShowcardFontFile.Length)
-                With VersionLabel
-                    .UseCompatibleTextRendering = True
-                    .Font = New Font(ProgramFonts.Families(0), 10.2, FontStyle.Regular)
-                End With
-                Marshal.FreeCoTaskMem(FontBuffer)
+        If Not FileIO.FileSystem.FileExists(Environment.GetFolderPath(Environment.SpecialFolder.Fonts) & "\SHOWG.TTF") Then
+            File.WriteAllBytes(My.Computer.FileSystem.SpecialDirectories.Temp & "\SHOWG.TTF", My.Resources.ShowcardFontFile)
+            Using LabelFonts As New PrivateFontCollection
+                LabelFonts.AddFontFile(My.Computer.FileSystem.SpecialDirectories.Temp & "\SHOWG.TTF")
+                VersionLabel.Font = New Font(LabelFonts.Families(0), 16.2, FontStyle.Regular)
+                LabelFonts.Dispose()
             End Using
         End If
     End Sub
