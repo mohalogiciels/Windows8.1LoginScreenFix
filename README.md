@@ -1,5 +1,5 @@
 # Windows 8.1 Login Screen Profile Picture Fix
-<sup>**Windows 8.1 Login Screen Fix**</sup>
+also known as <sup>**Windows 8.1 Login Screen Fix**</sup>
 
 <p align="center">
   <img width="100" alt="icon" src="https://github.com/user-attachments/assets/302758c9-194d-4929-b553-d800bc5e11f0" />
